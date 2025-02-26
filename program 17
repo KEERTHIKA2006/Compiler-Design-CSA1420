@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <ctype.h>
+int main() {
+    FILE *fp;
+    char ch;
+    int char_count = 0, word_count = 0, line_count = 0;
+    int in_word = 0;
+    char filename[100];
+    printf("Enter the filename: ");
+    scanf("%s", filename);
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("Error opening file.\n");
+        return 1; // Indicate an error
+    }
+    while ((ch = fgetc(fp)) != EOF) {
+        char_count++;
+
+        if (ch == '\n') {
+            line_count++;
+        }
+
+        if (isalnum(ch)) { 
+            if (!in_word) {
+                word_count++;
+                in_word = 1;
+            }
+        } else {
+            in_word = 0; 
+        }
+    }
+    fclose(fp); 
+    printf("Number of characters: %d\n", char_count);
+    printf("Number of words: %d\n", word_count);
+    printf("Number of lines: %d\n", line_count);
+    return 0;
+}
