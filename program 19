@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 10
+
+char productions[MAX][MAX];
+int numProductions;
+
+void findLeading(char nonTerminal, char leadingSet[]) 
+{
+    for (int i = 0; i < numProductions; i++) 
+    {
+        if (productions[i][0] == nonTerminal) 
+        {
+            if (!isupper(productions[i][2])) // If terminal, add to leading set
+            {
+                if (!strchr(leadingSet, productions[i][2])) // Avoid duplicates
+                    strncat(leadingSet, &productions[i][2], 1);
+            } 
+            else 
+            {
+                findLeading(productions[i][2], leadingSet); // Recursively find LEADING
+            }
+        }
+    }
+}
+
+int main() 
+{
+    printf("Enter number of productions: ");
+    scanf("%d", &numProductions);
+    getchar(); // Clear input buffer
+
+    printf("Enter the productions (e.g., E=E+T):\n");
+    for (int i = 0; i < numProductions; i++) 
+    {
+        fgets(productions[i], MAX, stdin);
+        productions[i][strcspn(productions[i], "\n")] = 0; // Remove newline
+    }
+
+    for (int i = 0; i < numProductions; i++) 
+    {
+        char nonTerminal = productions[i][0];
+        char leadingSet[MAX] = "";
+
+        findLeading(nonTerminal, leadingSet);
+
+        printf("LEADING(%c) = {", nonTerminal);
+        for (int j = 0; j < strlen(leadingSet); j++) 
+        {
+            printf(" %c", leadingSet[j]);
+        }
+        printf(" }\n");
+    }
+
+    return 0;
+}
